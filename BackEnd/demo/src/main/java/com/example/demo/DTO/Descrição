@@ -1,0 +1,5 @@
+"DTO" (Data Transfer Object) tem como objetivo permitir que o usuário insira dados
+menos delicados no payload da api. No caso, vamos usar o UsuarioDTO como exemplo.
+
+Ao invés do usuário precisar inserir o ID, o ID da equipe, e outros dados delicados,
+através do DTO ele pode simplesmente inserir os dados necessários para a criação do usuário.
