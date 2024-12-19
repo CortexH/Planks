@@ -8,6 +8,7 @@ import com.example.demo.Util.JwtUtil;
 import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,8 +64,10 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(userSalvo);
     }
 
+    /*
+    ----------- Remover ao terminar os debugs -----------------
     @GetMapping("/get/")
-    public ResponseEntity<?> RetornarPorEmail(@RequestParam String email){
+    public ResponseEntity<?> RetornarUsuárioPorEmail(@RequestParam String email){
         if(email == null){
             throw new IllegalArgumentException("Insira o email ou cpf do usuário");
         }
@@ -73,17 +76,17 @@ public class UsuarioController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(rep.findByemail(email));
     }
+
     @GetMapping("/get")
-    public ResponseEntity<?> RetornarTodos(){
+    public ResponseEntity<?> RetornarTodosOsUsuários(){
         return ResponseEntity.ok(rep.findAll());
     }
+    */
 
     @PostMapping("/login")
     public ResponseEntity<?> LoginUsuario(@RequestBody LoginClass login, HttpServletResponse response){
         Usuario user = rep.findByEmailAndSenha(login.email, login.senha);
-        if(user == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou senha inválidos!");
-        }
+        if(user == null) throw new IllegalArgumentException("Email ou senha incorretos");
         String token = JwtUtil.generateToken(user.getEmail(), user.getId());
 
         Cookie cookie = new Cookie("token", token);

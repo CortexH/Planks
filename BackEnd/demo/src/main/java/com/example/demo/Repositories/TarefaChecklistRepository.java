@@ -10,5 +10,4 @@ import java.util.Optional;
 public interface TarefaChecklistRepository extends JpaRepository<TarefaCheckList, Long> {
     Optional<List<TarefaCheckList>> findAllByChecklistId(Long id);
     Optional<TarefaCheckList> findByChecklistId(Long id);
-
 }

@@ -26,7 +26,8 @@ public class AuthenticationFilter implements Filter {
         String path = req.getRequestURI();
         String token = req.getHeader("Authorization");
 
-        if(path.equals("/user/new") || path.equals("/user/login")){
+        if(path.equals("/user/new") || path.equals("/user/login")
+                || path.equals("/user/get/") || path.equals("/user/get")){
             chain.doFilter(request, response);
             return;
         }

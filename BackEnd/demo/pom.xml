@@ -11,8 +11,8 @@
 	<groupId>com.example</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>CEEP_Biblioteca</name>
-	<description>API da biblioteca do CEEP</description>
+	<name>Plank API</name>
+	<description>API do serviço Plank</description>
 	<url/>
 	<licenses>
 		<license/>

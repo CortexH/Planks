@@ -21,11 +21,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/checklist")
 public class ChecklistController {
-
     @Autowired
     private ChecklistRepository rep;
     @Autowired
     private UsuarioRepository user_rep;
+
+    private static class ApagarComSucesso{
+        public String response;
+        public String code;
+    }
 
     public void validarChecklist(ChecklistDTO check){
         if(check.getNome() == null || check.getNome().isBlank()){
@@ -39,9 +43,8 @@ public class ChecklistController {
     @PostMapping("/new")
     public ResponseEntity<?> criarChecklist(
             @RequestBody ChecklistDTO check,
-            @RequestHeader("Authorization") String token
-    ){
-
+            @RequestHeader("Authorization") String token)
+    {
         try{
             Long userId = JwtUtil.userIdPorToken(token.replace("Bearer ", ""));
 
@@ -70,8 +73,10 @@ public class ChecklistController {
         }
 
     }
-    @GetMapping("/get/{id}")
-    public ResponseEntity<?> RetornarChecklistsPorIdUsuario(@PathVariable Long id){
+    @GetMapping("/get")
+    public ResponseEntity<?> RetornarChecklistsPorIdUsuario(@RequestHeader("Authorization") String token){
+        Long id = JwtUtil.userIdPorToken(token.replace("Bearer ", ""));
+
         if(!user_rep.existsById(id)){throw new NoSuchElementException("Usuário inválido");}
 
         Optional<List<Checklist>> ListaChecklists = rep.findAllByUsuarioId(id);
@@ -80,6 +85,29 @@ public class ChecklistController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(ListaChecklists.get());
+    }
+
+    @DeleteMapping("/apagar/{id}")
+    public ResponseEntity<?> ApagarChecklist(
+            @RequestHeader("Authorization") String token,
+            @PathVariable("id") Long id_checklist
+    ){
+        Long userId = JwtUtil.userIdPorToken(token.replace("Bearer ", ""));
+
+        Usuario user = user_rep.findById(userId).orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
+
+        Checklist checklist = user.getChecklists().stream().filter((n) -> n.getId().equals(id_checklist))
+                .findFirst().orElseThrow(() -> new NoSuchElementException("Checklist não encontrada"));
+
+        user.getChecklists().remove(checklist);
+        rep.delete(checklist);
+
+        ApagarComSucesso apg = new ApagarComSucesso();
+
+        apg.code = "200";
+        apg.response = "Checklist apagada com sucesso";
+
+        return ResponseEntity.status(HttpStatus.OK).body(apg);
     }
 
 }
